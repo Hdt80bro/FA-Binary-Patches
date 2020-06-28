@@ -11,62 +11,62 @@ This are just the patch files for this game. I decided to separate them from pat
 # Change List
 ## Fixes
 - Range ring performance improvement (don't render each ring twice)
-    - hook_RangeRings
+    - RangeRings
 - Camera performance improvements
-    - hook_LogParticleCap
-    - hook_LogSegBuffers
-    - hook_LowResolutionGCam
-    - hook_LowResolutionGCam2
+    - LogParticleCap
+    - LogSegBuffers
+    - LowResolutionGCam
+    - LowResolutionGCam2
 - Fix replays desyncing when a player leaves the game
-    - hook_EndGame
-    - hook_Gpg_Net_Entry
-    - hook_Kill_maploader_except
-    - hook_SessionEndGame
-    - hook_Update_Pipeline_Stream
-    - hook_decode
-    - hook_instance
-    - hook_recvfrom
-    - hook_sendto
-    - hook_sendto
-    - hook_sim_dispatch
-    - hook_user_input
-    - hook_xact_3dapply
-    - hook_SetPaused
-    - hook_SimCallback
+    - EndGame
+    - Gpg_Net_Entry
+    - Kill_maploader_except
+    - SessionEndGame
+    - Update_Pipeline_Stream
+    - decode
+    - instance
+    - recvfrom
+    - sendto
+    - sendto
+    - sim_dispatch
+    - user_input
+    - xact_3dapply
+    - SetPaused
+    - SimCallback
 - Prevent blueprint editor being used without cheat mode
-    - hook_FixOpenBPEditor
-    - hook_ObserverFix
+    - FixOpenBPEditor
+    - ObserverFix
 - Stop the engine calling lua every time a plane turns
-    - hook_OnMotionTurnEvent1
-    - hook_OnMotionTurnEvent2
-    - hook_OnMotionTurnEvent3
+    - OnMotionTurnEvent1
+    - OnMotionTurnEvent2
+    - OnMotionTurnEvent3
 - Optimised some AI actions
-    - hook_aiinitattack
-    - hook_aiinitattack_jmp
+    - aiinitattack
+    - aiinitattack_jmp
 - Fix a crash when units arrive at waypoints
-    - hook_WayPointArrive
+    - WayPointArrive
 
 ## Additions
 - Allow players to double-click to select Walls
-    - hook_Walls
+    - Walls
 - Free maximum sim rate
-    - hook_DelClampMaxSimRate1
-    - hook_DelClampMaxSimRate2
-    - hook_DelClampMaxSimRate3
-    - hook_DelClampMaxSimRate4
+    - DelClampMaxSimRate1
+    - DelClampMaxSimRate2
+    - DelClampMaxSimRate3
+    - DelClampMaxSimRate4
 - Adds an amphibious mode toggle to the Salem
-    - hook_luaSimGetStat
+    - luaSimGetStat
 - Make `LOWSELECTPRIO` apply to units under construction
-    - hook_selectionPriority
+    - selectionPriority
 - Allow the getting of Mass or Energy spots around a location 
-    - hook_UserGetDepositsAroundPoint
+    - UserGetDepositsAroundPoint
 - Allow devs to write console commands to the log
-    - hook_ConsoleLog
+    - ConsoleLog
 - Added an "ultra" graphics preset
-    - hook_UnlockUltraPreset
+    - UnlockUltraPreset
 - Allow armies to be shared by multiple players
-    - hook_SimSetFocusArmy
+    - SimSetFocusArmy
 - Allow upgrades to be queued on units under construction
-    - hook_BuildUnit
-    - hook_SelectUnit
-    - hook_SimArmyCreate (I think....)
+    - BuildUnit
+    - SelectUnit
+    - SimArmyCreate (I think....)
