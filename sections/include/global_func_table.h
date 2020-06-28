@@ -36,8 +36,6 @@ void sim_dispatch();
 void Update_Pipeline_Stream();
 void EndGame();
 
-class GFT
-{
-public:
-
+class GFT {
+    public:
 };
