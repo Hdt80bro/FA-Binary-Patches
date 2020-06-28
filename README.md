@@ -2,7 +2,7 @@
 
 This are some binary patches for Supreme Commander Forged Alliance. 
 
-To apply them build or get the pacther itself from here
+To apply them build or get the patcher itself from here
 
 https://github.com/FAETHER/FA_Patcher
 
