@@ -1,12 +1,12 @@
 # FA Binary Patches Repository
 
-This are some binary patches for Supreme Commander Forged Alliance. 
+This are some binary patches for Supreme Commander Forged Alliance.
 
 To apply them build or get the patcher itself from here
 
 https://github.com/FAETHER/FA_Patcher
 
-This are just the patch files for this game. I decided to separate them from patcher source code. 
+This are just the patch files for this game. I decided to separate them from patcher source code.
 
 # Change List
 ## Fixes
@@ -35,6 +35,7 @@ This are just the patch files for this game. I decided to separate them from pat
     - SimCallback
 - Prevent blueprint editor being used without cheat mode
     - FixOpenBPEditor
+- Can't become an observer while your human allies are still alive
     - ObserverFix
 - Stop the engine calling lua every time a plane turns
     - OnMotionTurnEvent1
@@ -49,7 +50,7 @@ This are just the patch files for this game. I decided to separate them from pat
 ## Additions
 - Allow players to double-click to select Walls
     - Walls
-- Free maximum sim rate
+- Maximum sim rate up to 50
     - DelClampMaxSimRate1
     - DelClampMaxSimRate2
     - DelClampMaxSimRate3
@@ -58,13 +59,13 @@ This are just the patch files for this game. I decided to separate them from pat
     - luaSimGetStat
 - Make `LOWSELECTPRIO` apply to units under construction
     - selectionPriority
-- Allow the getting of Mass or Energy spots around a location 
+- Allow the getting of Mass or Energy spots around a location & Entry point to ui functions queue
     - UserGetDepositsAroundPoint
 - Allow devs to write console commands to the log
     - ConsoleLog
 - Added an "ultra" graphics preset
     - UnlockUltraPreset
-- Allow armies to be shared by multiple players
+- Allow armies to be shared by multiple players & Entry point to sim functions queue
     - SimSetFocusArmy
 - Allow upgrades to be queued on units under construction
     - BuildUnit
