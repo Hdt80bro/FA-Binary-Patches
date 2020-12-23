@@ -11,6 +11,7 @@ const int g_Sim = 0x10A63F0;
 const int g_EntityCategoryTypeInfo = 0x10C6E70;
 const int g_CAiBrainTypeInfo = 0x10C6FA0;
 const int g_CUIManager = 0x10A6450;
+const int g_EngineStats = 0x10A67B8;
 
 const int ui_SelectTolerance = 0x0F57A90;
 const int ui_ExtractSnapTolerance = 0x0F57A94;
@@ -26,6 +27,8 @@ const int s_EXPERIMENTAL = 0xE204B8;
 const int s_global = 0xE00D90; // "<global>"
 
 // Int const
+
+const int ui_ProgressBarColor = 0x00F57BB8;
 
 //Adress const
 const int _CannotQueCommandInConstruct = 0x006EFB0E;
@@ -163,7 +166,7 @@ LuaObjectFinalize
 0090C5A0 MoveTop(lua_state*, int Offset)
 00913990 PushNewArgs(lua_State*, numArgs)
 00914E90 AllocCFunction(lua_State*, int numArgs)
-0091A240 StackAllocate(lua_State*, lua_var* stack opt, int stackSize opt, int newSize):eax
+0091A240 LuaStackAllocate(lua_State*, lua_var* stack opt, int stackSize opt, int newSize):eax
 009248E0 CreateStr(lua_State*, char* str, strLen):eax
 00924860 CreateStr(lua_State* ebx, hash eax, char* str, strLen):eax
 00927320 AllocTable(lua_State*, numArr, numRec):eax
@@ -178,6 +181,7 @@ LuaObjectFinalize
 00958B20 AllocMemory(Size):eax
 00957A70 AllocMemory+1
 00A825B9 AllocMemory2(Size):eax
+00A82130 AllocMemory2+1
 00958C40 FreeMemory(Ptr)
 00957AF0 FreeMemory+1
 00957A60 FreeMemory+2
@@ -238,6 +242,25 @@ LuaObjectFinalize
 008F4260 D3DXEffect::EndPass ?
 00941D70 D3DXEffect::SetMatrix ?
 00941F60 D3DXEffect::SetTechnique
+00858D80 DisplayEconomyOverlay
+00430590 D3DGetDevice
+008D82F0 CreateBitArray2D
+008D8210 BitArray2DReset
+008D8200 DestroyBitArray2D
+005C36A0 CreateCAiReconDBImpl
+005BFF90 InitCAiReconDBImpl
+00507720 InitCIntelGrid
+0067AE70 SetEntityCollision
+0067AD30 CreateCollisionSphere
+0067AC40 CreateCollisionBox
+0067AE00 DestroyCollision
+0084C5E0 CreateCUIManager
+0084C9C0 InitCUIManager
+00408940 CreateEngineStats
+004088C0 InitEngineStats(EngineStats*)
+0040C200 CreateEngineStatsItem(EngineStats* ecx, char* pathAndName, int value):eax
+0040A0A0 CreateStatItemRoot(EngineStats*):eax
+00408730 InitStatItem(StatItem*, char* name):eax
 0053E180 CreateCLocalClient
 0053BD40 InitCClientBase
 0053FAF0 CreateCClientManager

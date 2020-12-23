@@ -2,6 +2,7 @@
 
 #pragma once
 typedef unsigned int uint;
+typedef unsigned int bool32;
 
 struct luaFuncDescReg
 {
@@ -113,6 +114,33 @@ struct FileStream // : Stream
 {	// 0x34 bytes
 };
 
+struct StatItem // : .?AV?$TDatTreeItem@VStatItem@Moho@@@Moho@@
+{	// 0xA0 bytes
+	void* vtable;
+	// at 0x24
+	int value; // int/float
+	// at 0x74
+	string name;
+	// at 0x90
+	int valueType;
+	int unknown2;
+	// at 0x98
+	void* criticalSection; // result RtlInitializeCriticalSection
+	bool unknown1; // set 1 at 00AC1A69, at 00AC1AB0 check(0 -> WaitForSingleObject, 1 -> RtlEnterCriticalSection)
+};
+
+struct EngineStats // : .?AV?$Stats@VStatItem@Moho@@@Moho@@
+{	// 0x50 bytes
+	void* vtable;
+	StatItem* stat;
+	void* criticalSection; // result RtlInitializeCriticalSection
+	bool32 unknown1; // set 1 at 00AC1A69
+	string str1; // written "stats.log"
+	string str2;
+	int unknown2;
+	bool32 unknown3;
+};
+
 //LuaPlus
 struct lua_var
 {	// 0x8 bytes
@@ -130,7 +158,7 @@ struct lua_var
 		6 - CFunction
 		7 - Function
 		8 - UserData
-		9 - NumTags?
+		9 - Thread
 	*/
 };
 
@@ -190,6 +218,8 @@ struct CUIWorldView // : CMauiControl
 {	// 0x2A8 bytes
 	// at 0x120
 	Camera* Camera;
+	// at 0x208
+	void* CWldSession;
 };
 
 struct linked_list
@@ -260,9 +290,8 @@ struct LaunchInfoNew
 	int unknown2;
 	int unknown3; // = -1
 	// at 0x6C
-	string str3;
-	// at 0x88
-	bool boolean1;
+	string interfaceLang;
+	bool cheatsEnabled; // copied to CWldSession + 0x4D4
 	char _pad1[3];
 	int unknown4;
 };
@@ -280,10 +309,15 @@ struct RBlueprint // : RObject
 	// at 0x4
 	RRuleGameRules* owner;
 	string name;
+	string desc;
+	// at 0x40
+	string source; // example: /units/uel0001/uel0001_unit.bp
 };
 
 struct RMeshBlueprint // : RBlueprint
 {	// 0x80 bytes
+	// at 0x70
+	float IconFadeInZoom;
 };
 
 struct REntityBlueprint // : RBlueprint
@@ -306,6 +340,23 @@ struct RUnitBlueprint // : REntityBlueprint
 	string ArmorType;
 	// at 0x564
 	float MaxBuildDistance;
+};
+
+struct CUIManager // : IUIManager
+{	// 0x78 bytes
+	// at 0x30
+	LuaState* state; // from [10A6478]
+};
+
+struct CAiReconDBImpl // : IAiReconDB
+{	// 0xB0 bytes
+	void* vtable;
+	// at 0xA8
+	bool FogOfWar;
+};
+
+struct CIntelGrid
+{	// 0x24 bytes
 };
 
 struct IClientManager
@@ -393,13 +444,9 @@ struct SimArmyEconomyInfo
 
 struct UserArmy
 {	// 0x210 bytes
-	void* unknown1;
-
+	int armyIndex;
 	string name;
-
-	// at 0x20
 	string nickname;
-	// at 0x3C
 	bool isCivilian;
 	// at 0x80
 	float storedEnergy;
@@ -447,6 +494,8 @@ struct SimArmy // : IArmy
 	//void* GetUnitCap;
 	//void* SetUnitCap;
 
+	void* unknown1;
+	int armyIndex;
 	string name;
 	string nickname;
 
@@ -476,7 +525,7 @@ struct SimArmy // : IArmy
 	moho_set allies;
 	moho_set enemies;
 
-	char datas[0x52];
+	char datas[0x4A];
 	// at 0x130 FA
 	moho_set mValidCommandSources;
 
@@ -534,7 +583,7 @@ struct EntityChain // [[Entities+4]+4]
 };
 
 struct Entity // : CScriptObject
-{	// ~0x270 bytes
+{	// 0x270 bytes
 };
 
 struct Projectile // : Entity
@@ -570,11 +619,19 @@ struct Unit // : IUnit
 	Vector3f Pos3;
 	// at 0x17C
 	int TickCount1; // Readonly
+	void* CColPrimitiveBase;
 	// at 0x248
 	Vector3f Pos4;
 	Vector3f Pos5;
-	// at 0x298
-	float ShieldPercent; // Readonly
+	// at 0x294
+	float FuelRatio;
+	float ShieldRatio; // Readonly
+	// at 0x2AC
+	float WorkProgress;
+	// at 0x4B0
+	void* MotionEngine; // +0xC FuelUseTime
+	// at 0x55C
+	void* IAiTransport;
 	// at 0x59C
 	Vector3f Pos6;
 	// at 0x668
@@ -586,6 +643,8 @@ struct UserEntity // : WeakObject
 	// at 0x44
 	int EntityID;
 	RPropBlueprint* Blueprint;
+	// at 0x58
+	RMeshBlueprint* Mesh;
 	// at 0x68
 	float CurHealth;
 	float MaxHealth;
@@ -608,6 +667,8 @@ struct UserUnit // : UserEntity
 	// at 0x44
 	int UnitID;
 	RUnitBlueprint* Blueprint;
+	// at 0x1DC
+	string customUnitName;
 };
 
 struct Sim // : ICommandSink
@@ -684,13 +745,19 @@ struct CWldSession
 
 	int focusArmyIndex; // focused army, -1 = observer
 
-	bool isGameOver;
+	bool32 isGameOver;
 	// at 0x4B4
 	float mouseWorldPosX;
 	float mouseWorldPosY;
 	float mouseWorldPosZ;
+	// at 0x4CC
+	float mouseScreenPosX;
+	float mouseScreenPosY;
 	// at 0x4D4
-	bool cheatsEnabled;
+	bool cheatsEnabled; // copied from LaunchInfoNew + 0x88
+	// at 0x4E8
+	bool displayEconomyOverlay;
+	bool relationsArmyColors;
 };
 
 struct CSimDriver // : ISTIDriver
