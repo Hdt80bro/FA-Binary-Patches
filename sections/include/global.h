@@ -1,8 +1,20 @@
 #pragma once
+/*
+GetClassNamePtr -> [[[Self]-4]+C]+8
+GetParentClassNamePtr -> [[[[Self]-4]+28]]+8
 
-// GetClassNamePtr -> [[[Self]-4]+C]+8
-// GetParentClassNamePtr -> [[[[Self]-4]+28]]+8
+Get debugging info about a Lua call:
 
+[[[lua_State+28]+lvl*5*8]-4] = FuncPtr
+
+[[FuncPtr+18]+20]+14 = full path to file
+
+[[FuncPtr+18]+3C] = line defined
+
+[lua_State+28]+lvl*5*8 = Base
+[[[Base]-4]+18] = Base2
+[[Base+0C]-[Base2+0C]+[Base2+14]] = currentline
+*/
 // Globals
 const int g_STIDriver = 0x10C4F50;
 const int g_SWldSessionInfo = 0x10C4F58;
