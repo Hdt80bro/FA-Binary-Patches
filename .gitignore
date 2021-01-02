@@ -5,5 +5,8 @@ Env.ld
 *.o
 nop
 settings.ini
+/mingw32
+/preprocessor/define.h
+Launch.bat
 
 .idea/
