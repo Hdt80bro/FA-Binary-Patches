@@ -50,6 +50,8 @@ This are just the patch files for this game. I decided to separate them from pat
 ## Additions
 - Allow players to double-click to select Walls
     - Walls
+- Adds optimized table.getsize2(~25 times faster)
+    - GetTableSize
 - Maximum sim rate up to 50
     - DelClampMaxSimRate1
     - DelClampMaxSimRate2
