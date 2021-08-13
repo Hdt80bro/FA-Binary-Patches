@@ -38,6 +38,10 @@ const int s_FACTORY = 0xE19824;
 const int s_EXPERIMENTAL = 0xE204B8;
 const int s_global = 0xE00D90; // "<global>"
 
+// Byte const
+
+const char d3d_WindowsCursor = 0x010A636E;
+
 // Int const
 
 const int ui_ProgressBarColor = 0x00F57BB8;
@@ -215,7 +219,7 @@ LuaObjectFinalize
 00529510 DestroyRRuleGameRules
 00546650 FindRes(CSimResources* ecx, Type, Rect*):Bool
 00546760 FindRes(CSimResources* ecx, PtrPosXY, PtrResultXY, Radius, Type):Bool
-00581AA0 OnInit(Arg1)
+00581AA0 CallFunctionLua(self ecx)
 005BD630 Internal IsAlly
 005D5540 Internal IsEnemy
 00707BF0 Internal IsNeutral
@@ -273,6 +277,12 @@ LuaObjectFinalize
 0040C200 CreateEngineStatsItem(EngineStats* ecx, char* pathAndName, int value):eax
 0040A0A0 CreateStatItemRoot(EngineStats*):eax
 00408730 InitStatItem(StatItem*, char* name):eax
+008E5050 CalcHash
+00542870 CreateLaunchInfoNew
+00542790 InitLaunchInfoNew
+005427F0 DestroyLaunchInfoNew
+0088C9D0 CreateSWldSessionInfo
+0088D060 InitSWldSessionInfo
 0053E180 CreateCLocalClient
 0053BD40 InitCClientBase
 0053FAF0 CreateCClientManager

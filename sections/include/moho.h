@@ -336,6 +336,11 @@ struct RProjectileBlueprint // : REntityBlueprint
 
 struct RUnitBlueprint // : REntityBlueprint
 {	// 0x568 bytes
+	// at 0x400
+	int T2ClassSize;
+	int T3ClassSize;
+	int GenericClassSize;
+	int SClassSize;
 	// at 0x43C
 	string ArmorType;
 	// at 0x564
@@ -674,7 +679,10 @@ struct UserUnit // : UserEntity
 struct Sim // : ICommandSink
 {	// 0xAF8 bytes
 	void* vtable;
-#ifdef FORGED_ALLIANCE
+	// at 0x50
+	char dynamicHash[16];
+	char hashTrash[0x50];
+	char simHashes[16*128]; // at 0xB0-8B0
 	// at 0x8C0
 	void* CEffectManager;   // 0x18 bytes
 	void* CSimSoundManager; // 0x720 bytes
@@ -683,9 +691,15 @@ struct Sim // : ICommandSink
 	CSimResources* Deposits;
 	// at 0x8D8
 	void* LuaStack; // 0x34 bytes
+	// at 0x8E6
+	bool cheatsEnabled;
+	// at 0x8F8
+	uint beatCounter1;
+	void* unknown1; // self+0x900 or null
+	uint beatCounter2;
 	// at 0x904
-	void* unknown1; // 0x9CC bytes
-	void* unknown2; // 0x68 bytes
+	void* unknown2; // 0x9CC bytes
+	void* unknown3; // 0x68 bytes
 	// at 0x91C Moho | at 0x90C FA
 	vector armies;// <class Moho::SimArmy *>
 	// at 0x920
@@ -693,17 +707,17 @@ struct Sim // : ICommandSink
 	// at 0x93C Moho | at 0x92C FA
 	int ourCmdSource; // possibly just current in simulation.
 	// at 0x97C
-	void** unknown3; // 0x30 bytes
+	void** unknown4; // 0x30 bytes
 	void* CAiFormationDB; // 0x40 bytes
 	// at 0x984
 	void* Entities;
-	void* unknown4; // 0xCD0 bytes
+	void* unknown5; // 0xCD0 bytes
 	// at 0x99C
-	void* unknown5; // 0xCF0 bytes
+	void* unknown6; // 0xCF0 bytes
 	// at 0xA38
-	void* unknown6; // 0xC bytes
-#else
-#endif
+	void* unknown7; // 0xC bytes
+	// at 0xA88
+	int focusArmyIndex; // focused army, -1 = observer
 };
 struct CWldSession
 {	// 0x508 bytes
