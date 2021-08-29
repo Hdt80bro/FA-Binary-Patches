@@ -312,6 +312,7 @@ struct RBlueprint // : RObject
 	string desc;
 	// at 0x40
 	string source; // example: /units/uel0001/uel0001_unit.bp
+	uint BlueprintOrdinal;
 };
 
 struct RMeshBlueprint // : RBlueprint
@@ -431,10 +432,10 @@ struct SimArmyEconomyInfo
 	float reclaimedEnergy;
 	float reclaimedMass;
 
-	float requestedMass;    // div 10
 	float requestedEnergy;  // div 10
-	float lossMass;         // div 10
-	float lossEnergy;       // div 10
+	float requestedMass;    // div 10
+	float expenseEnergy;    // div 10
+	float expenseMass;      // div 10
 
 	uint maxEnergy;
 	int unknown3;
@@ -462,10 +463,10 @@ struct UserArmy
 	float reclaimedEnergy;
 	float reclaimedMass;
 
-	float requestedMass;    // div 10
 	float requestedEnergy;  // div 10
-	float lossMass;         // div 10
-	float lossEnergy;       // div 10
+	float requestedMass;    // div 10
+	float expenseEnergy;    // div 10
+	float expenseMass;      // div 10
 
 	uint maxEnergy;
 	int unknown3; // =0
@@ -515,10 +516,10 @@ struct SimArmy // : IArmy
 	float reclaimedEnergy;
 	float reclaimedMass;
 
-	float requestedMass;    // div 10
 	float requestedEnergy;  // div 10
-	float lossMass;         // div 10
-	float lossEnergy;       // div 10
+	float requestedMass;    // div 10
+	float expenseEnergy;    // div 10
+	float expenseMass;      // div 10
 
 	uint maxEnergy;
 	int unknown3; // =0

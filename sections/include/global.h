@@ -226,7 +226,9 @@ LuaObjectFinalize
 006FE530 SimArmyAlloc(Arg1,Arg2,Arg3,Arg4,Arg5,Arg6)
 006FE690 SimArmyCreate(Arg1,Arg2,Arg3,Arg4,Arg5,Arg6)
 006FE670 DestroySimArmy
-005930D0 GetBrain(Table* eax):eax
+004C8270 Get_c_object //From table Ptr to value
+005E3800 GetCUnit(Table* eax):eax
+005930D0 GetCBrain(Table* eax):eax
 00707D60 GetSimArmy
 0073B1B0 SetArmyIndex(CSimDriver* ecx, value)
 0073F4E0 CSimDriverAlloc(Arg1,Arg2,Arg3,Arg4)
