@@ -8,32 +8,38 @@ void SimGetDepositsAroundPoint()
     const char* s_Dist = "Dist";
     __asm__
     (
-        "MOV EAX,[ESI+0xC] \n"
-        "MOVSS XMM0,[EAX+0x4] \n"     // X
-        "MOVSS XMM1,[EAX+0xC] \n"     // Z
-        "MOVSS XMM2,[EAX+0x14] \n"    // Radius
-        "CVTTSS2SI EAX,[EAX+0x1C] \n" // Type
-
-        "SUB ESP,0x28 \n"
+        "SUB ESP,0x1C \n"
         "XORPS XMM5,XMM5 \n"
         "MOVUPS [ESP],XMM5 \n"
         "MOV ECX,ESP \n"
-        "PUSH EAX \n"
         "PUSH 0 \n"
         "PUSH 0 \n"
         "PUSH [ESI+0x44] \n"
-        "CALL 0x00909940 \n"          // CreateTable
-        "POP EAX \n"
-        "MOV DWORD PTR[ESP+0x24],1 \n"
+        "CALL 0x00909940 \n"     // CreateTable
+
+        "MOV EAX,[ESI+0xC] \n"
+        "MOVSS XMM0,[EAX+0x4] \n"  // X
+        "ADDSS XMM0,[EAX+0xC] \n"  // Z
+        "ADDSS XMM0,[EAX+0x14] \n" // Radius
+        "COMISS XMM0,[0x0F3F7D0] \n"
+        "JE L4 \n" //Is Inf/NaN
 
         "MOV ECX,[0x10A63F0] \n"
         "MOV ECX,[ECX+0x8D0] \n"
         "MOV EDX,[ECX+0x14] \n"
         "MOV EDI,[ECX+0x10] \n"
+        "MOV [ESP+0x14],EDX \n"
+        "MOV DWORD PTR[ESP+0x18],1 \n"
 
         "L1: \n"
-          "CMP EDI,EDX \n"
+          "CMP EDI,[ESP+0x14] \n"
           "JGE L4 \n"
+
+          "MOV EAX,[ESI+0xC] \n"
+          "MOVSS XMM0,[EAX+0x4] \n"     // X
+          "MOVSS XMM1,[EAX+0xC] \n"     // Z
+          "MOVSS XMM2,[EAX+0x14] \n"    // Radius
+          "CVTTSS2SI EAX,[EAX+0x1C] \n" // Type
 
           "CMP EAX,0 \n"
           "JE L2 \n"
@@ -60,12 +66,8 @@ void SimGetDepositsAroundPoint()
           "COMISS XMM3,XMM2 \n"
           "JA L3 \n"
 
-          "MOVSS [ESP+0x14],XMM0 \n"
-          "MOVSS [ESP+0x18],XMM1 \n"
-          "MOV [ESP+0x1C],EAX \n"
-          "MOV [ESP+0x20],EDX \n"
-
           "SUB ESP,0x14 \n"
+          "XORPS XMM5,XMM5 \n"
           "MOVUPS [ESP],XMM5 \n"
           "MOV ECX,ESP \n"
           "PUSH 0 \n"
@@ -111,18 +113,14 @@ void SimGetDepositsAroundPoint()
 
           "MOV ECX,[ESP] \n"
           "PUSH ESP \n"
-          "PUSH [ESP+0x3C] \n"
+          "PUSH [ESP+0x30] \n"
           "CALL 0x009087A0 \n"        // PushTable
 
           "MOV ECX,ESP \n"
           "CALL 0x009075D0 \n"        // LuaObjectFinalize
           "ADD ESP,0x14 \n"
 
-          "ADD DWORD PTR[ESP+0x24],0x1 \n"
-          "MOV EDX,[ESP+0x20] \n"
-          "MOV EAX,[ESP+0x1C] \n"
-          "MOVSS XMM1,[ESP+0x18] \n"
-          "MOVSS XMM0,[ESP+0x14] \n"
+          "ADD DWORD PTR[ESP+0x18],0x1 \n"
 
           "L3: \n"
           "ADD EDI,0x14 \n"
@@ -136,7 +134,7 @@ void SimGetDepositsAroundPoint()
 
         "MOV ECX,ESP \n"
         "CALL 0x009075D0 \n"          // LuaObjectFinalize
-        "ADD ESP,0x28 \n"
+        "ADD ESP,0x1C \n"
 
         "MOV EAX,0x1 \n"
         :
