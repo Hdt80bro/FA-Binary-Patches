@@ -50,7 +50,11 @@ This are just the patch files for this game. I decided to separate them from pat
 ## Additions
 - Allow players to double-click to select Walls
     - Walls
+- Similar to GetSystemTimeSecondsOnlyForProfileUse
+  Allows to deal with the loss of accuracy. It is present in the Sim and UI
+    - GetTimeForProfile
 - Adds optimized table.getsize2(~25 times faster) and table.empty2
+  Added getn2 as alias getn. Entry point to math functions queue
     - GetTableSize
 - Maximum sim rate up to 50
     - DelClampMaxSimRate1

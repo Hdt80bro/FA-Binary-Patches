@@ -227,6 +227,7 @@ LuaObjectFinalize
 006FE690 SimArmyCreate(Arg1,Arg2,Arg3,Arg4,Arg5,Arg6)
 006FE670 DestroySimArmy
 004C8270 Get_c_object //From table Ptr to value
+005936C0 GetSimCUnit(Table* eax):eax
 005E3800 GetCUnit(Table* eax):eax
 005930D0 GetCBrain(Table* eax):eax
 00707D60 GetSimArmy
@@ -238,6 +239,8 @@ LuaObjectFinalize
 00744060 SimSetup(Arg1,Arg2)
 007458E0 SimFinalize(Sim*)
 00747180 IsCheating!
+005459F0 GetLuaNumber
+0067AFF0 LayerChange
 007A4970 OnMouseMove
 008704B0 OnMouseMoveOverMap
 0086E480 CUIWorldViewInit(Arg1,Arg2,Arg3,Arg4,Arg5,Arg6,Arg7)

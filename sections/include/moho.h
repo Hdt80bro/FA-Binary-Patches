@@ -1,4 +1,4 @@
-//MohoEngine.dll Disassembling notes
+//MohoEngine Disassembling notes
 
 #pragma once
 typedef unsigned int uint;
@@ -6,13 +6,13 @@ typedef unsigned int bool32;
 
 struct luaFuncDescReg
 {
-	void** RegisterFunc; // call for register lua function
-	char* FuncName; // lua name function
-	char* ClassName; // lua class name. <global> if class none
-	char* FuncDesc; // for log
-	luaFuncDescReg* PrevStruct; // reg calls the chain
-	void* FuncPtr; // code address
-	void* ClassPtr; // C++ class type address. NULL if class none
+	void** RegisterFunc;  // call for register lua function
+	char* FuncName;       // lua name function
+	char* ClassName;      // lua class name. <global> if class none
+	char* FuncDesc;       // for log
+	luaFuncDescReg* Next; // reg func of chain
+	void* FuncPtr;        // code address
+	void* ClassPtr;       // C++ class type address. NULL if class none
 };
 
 struct string
@@ -619,6 +619,7 @@ struct Unit // : IUnit
 	Vector3f Pos1;
 	Vector4f Rot2;
 	Vector4f Pos2;
+	float FractionComplete;
 	// at 0x154
 	SimArmy* Owner;
 	Vector4f Rot3;
