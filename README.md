@@ -10,6 +10,10 @@ This are just the patch files for this game. I decided to separate them from pat
 
 # Change List
 ## Fixes
+- Prevents the crash with 'None' collisions of air. #3235
+    - AirNoneCollisionFix
+- Prevents commander exploding for no reason. #3406
+    - NegativeIncomeFix
 - Range ring performance improvement (don't render each ring twice)
     - RangeRings
 - Camera performance improvements
