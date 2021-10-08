@@ -4,11 +4,11 @@ void GetTimeForProfile()
     (
         "SUB ESP,0x8 \n"
         "PUSH ESP \n"
-        "CALL 0x75E5DF40 \n" //QueryPerformanceCounter
+        "CALL DWORD PTR [0xC0F470] \n" //QueryPerformanceCounter
         "FILD QWORD PTR [ESP] \n"
 
         "PUSH ESP \n"
-        "CALL 0x75E616E0 \n" //QueryPerformanceFrequency
+        "CALL DWORD PTR [0xC0F46C] \n" //QueryPerformanceFrequency
         "FILD QWORD PTR [ESP] \n"
 
         "MOV ECX,[ESI+0xC] \n"
