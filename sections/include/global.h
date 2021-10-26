@@ -1,7 +1,10 @@
 #pragma once
 /*
 GetClassNamePtr -> [[[Self]-4]+C]+8
-GetParentClassNamePtr -> [[[[Self]-4]+28]]+8
+GetParentClassNamePtr -> [[[[Self]-4]+24+1*4]]+8
+
+TrueClassOffset -> -[[[Self]-4]+4]
+ClassAncestors -> [[Self]-4]+24
 
 Get debugging info about a Lua call:
 
@@ -11,9 +14,9 @@ Get debugging info about a Lua call:
 
 [[FuncPtr+18]+3C] = line defined
 
-[lua_State+28]+lvl*5*8 = Base
-[[[Base]-4]+18] = Base2
-[[Base+0C]-[Base2+0C]+[Base2+14]] = currentline
+[lua_State+28]+lvl*5*8 = CallInfo //lua.org/source/5.0/lstate.h.html#CallInfo
+[[[CallInfo]-4]+18] = Proto       //lua.org/source/5.0/lobject.h.html#Proto
+[[CallInfo+0C]-[Proto+0C]+[Proto+14]] = currentline
 */
 // Globals
 const int g_STIDriver = 0x10C4F50;
@@ -24,6 +27,10 @@ const int g_EntityCategoryTypeInfo = 0x10C6E70;
 const int g_CAiBrainTypeInfo = 0x10C6FA0;
 const int g_CUIManager = 0x10A6450;
 const int g_EngineStats = 0x10A67B8;
+
+const int g_ExeVersion1 = 0x00876666;
+const int g_ExeVersion2 = 0x0087612d;
+const int g_ExeVersion3 = 0x004d3d40;
 
 const int ui_SelectTolerance = 0x0F57A90;
 const int ui_ExtractSnapTolerance = 0x0F57A94;
@@ -187,12 +194,19 @@ LuaObjectFinalize
 00924860 CreateStr(lua_State* ebx, hash eax, char* str, strLen):eax
 00927320 AllocTable(lua_State*, numArr, numRec):eax
 
+0090AD30 lua_getn(lua_State*, TableIndex):eax
+0090D0A0 lua_rawgeti(lua_State*, TableIndex, VarIndex):eax to lua_state vars
+
 // Other
 
 00937C30 SpewF(char* str, args...)
 00937CB0 LogF(char* str, args...)
 00937D30 WarningF(char* str, args...)
 0041C990 ConsoleLogF(char* str, args...)
+
+00938E00 Format
+00938F10 Format+1
+00A89950 RaiseException+1
 
 00958B20 AllocMemory(Size):eax
 00957A70 AllocMemory+1
@@ -203,6 +217,8 @@ LuaObjectFinalize
 00957A60 FreeMemory+2
 00A82542 FreeMemory+3
 
+00908A70 GetVar(out LuaObject* ecx, LuaState**):eax LuaObject
+009132F0 lua_getinfo
 00AA549E StrCmp(char* str1, char* str2)
 00A89190 CopyMem(void* dest, void* src, len)
 006E5660 Moho_SetSetSize(moho_set* ecx, setSize)
@@ -211,7 +227,7 @@ LuaObjectFinalize
 00A89CC0 FloatToInt(value):eax
 004035F0 IsValidCommandSource
 00408450 CompareStrings(char* str1, char* str2, strLen1):eax -1,0,1
-0040A880 CompareStrings2(char* str1, strLen1, char* str2, strLen2) ?
+0040A880 CompareStrings2(char* str1, strLen1, char* str2, strLen2):eax
 0041CC90 SimConExecute
 004CD3A0 Register LUA function
 00528460 RRuleGameRulesAlloc(Arg1,Arg2)
@@ -238,6 +254,7 @@ LuaObjectFinalize
 007434D0 SimCreate(Arg1,Arg2)
 00744060 SimSetup(Arg1,Arg2)
 007458E0 SimFinalize(Sim*)
+006A9F40 UpdCompleteProgress
 00747180 IsCheating!
 005459F0 GetLuaNumber
 0067AFF0 LayerChange
@@ -304,6 +321,8 @@ LuaObjectFinalize
 007AA9C0 CreateCamera
 007A7950 InitCamera
 007A7DC0 DestroyCamera
+00749F40 SimBeat
+0073DAD0 SimSync
 00894530 UserSync
 008B1520 InitUserArmy
 008B85E0 InitUserEntity

@@ -1,8 +1,11 @@
 //MohoEngine Disassembling notes
 
+//LUA funcs map github.com/Eximius/forged_jit
+
 #pragma once
 typedef unsigned int uint;
 typedef unsigned int bool32;
+typedef unsigned short uint16;
 
 struct luaFuncDescReg
 {
@@ -141,40 +144,39 @@ struct EngineStats // : .?AV?$Stats@VStatItem@Moho@@@Moho@@
 	bool32 unknown3;
 };
 
-//LuaPlus
-struct lua_var
+struct lua_var //lua.org/source/5.0/lobject.h.html#TObject
 {	// 0x8 bytes
 	int type;
 	void* value;
 
 	/* Types:
-		-1 - None
-		0 - Nil
-		1 - Boolean
-		2 - LightUserData || UserData
-		3 - Number || Integer
-		4 - String
-		5 - Table
-		6 - CFunction
-		7 - Function
-		8 - UserData
-		9 - Thread
+	  -1 - None
+	   0 - Nil
+	   1 - Boolean
+	   2 - LightUserData
+	   3 - Number
+	   4 - String
+	   5 - Table
+	   6 - CFunction
+	   7 - Function
+	   8 - UserData
+	   9 - Thread
 	*/
 };
 
-struct lua_State // www.lua.org/source/5.0/lstate.h.html#lua_State
+struct lua_State //lua.org/source/5.0/lstate.h.html#lua_State
 {
-	void* unknown1;
-	void* unknown2;
+	void* nextGCObject;
+	uint16 tt, marked;
 	lua_var* objects_end;
 	lua_var* objects_start; // 1 based index
-	void* global_State;     // ?
-	void* callInfo;         // ?
+	void* global_State;
+	void* callInfo;
 	lua_var* stack_last;
 	lua_var* stack;
 	int stacksize;          // numVars
 	// at 0x44
-	void* LuaState;         // ?
+	void* LuaState;
 };
 struct LuaObject;
 struct LuaState
@@ -201,7 +203,6 @@ struct LuaObject
 	lua_var value;
 };
 
-// Moho
 struct Moho__SSTICommandIssueData
 {
 };
@@ -590,6 +591,10 @@ struct EntityChain // [[Entities+4]+4]
 
 struct Entity // : CScriptObject
 {	// 0x270 bytes
+	// at 0x68
+	uint EntityID; //For units x|xx|xxxxxx Type,Army,Num. Uses for UserSync
+	REntityBlueprint* Blueprint;
+	uint CreationIndex; //?
 };
 
 struct Projectile // : Entity
@@ -604,7 +609,7 @@ struct Prop // : Entity
 	RPropBlueprint* Blueprint;
 };
 
-struct Unit // : IUnit
+struct Unit // : Entity
 {	// 0x6A8 bytes
 	// at 0x50
 	void* self1;
@@ -637,6 +642,11 @@ struct Unit // : IUnit
 	float WorkProgress;
 	// at 0x4B0
 	void* MotionEngine; // +0xC FuelUseTime
+	// at 0x534
+	void* WorkValues; //+0x8
+	bool Flag;
+	// at 0x53C
+	float WorkRate;
 	// at 0x55C
 	void* IAiTransport;
 	// at 0x59C
