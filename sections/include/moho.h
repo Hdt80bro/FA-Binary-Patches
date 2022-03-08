@@ -178,29 +178,30 @@ struct lua_State //lua.org/source/5.0/lstate.h.html#lua_State
 	// at 0x44
 	void* LuaState;
 };
-struct LuaObject;
+struct LuaState;
+struct LuaObject
+{	// 0x14 bytes
+	LuaObject* m_next;
+	LuaObject* m_prev;
+	LuaState* m_state;
+	lua_var m_object;
+};
 struct LuaState
-{	// 0x28 bytes ?
-	lua_State* lua_State;
-	void* unknown1;
-	void* unknown2;
-	void* unknown3;
-	void* important1;
-	// at 0x20
-	LuaState* self;
-	LuaObject* prev;
+{	// 0x34 bytes
+	lua_State* m_state;
+	void* ForMultipleThreads;
+	bool m_ownState;
+	LuaObject m_threadObj;
+	LuaState* m_rootState;
+	struct MiniLuaObject {
+		LuaObject* m_next;  // only valid when in free list
+		LuaObject* m_prev;  // only valid when in used list
+	} m_headObject, m_tailObject;
 };
 struct LuaStackObject
 {	// 0x8 bytes
 	LuaState* state;
 	int stack_index;
-};
-struct LuaObject
-{	// 0x14 bytes
-	LuaObject* prev;
-	LuaObject* next;
-	LuaState* m_state;
-	lua_var value;
 };
 
 struct Moho__SSTICommandIssueData
