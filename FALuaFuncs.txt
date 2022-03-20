@@ -12,6 +12,7 @@ namespace LuaPlus
       LuaObject* m_prev;
       LuaState* m_state;
       lua_TObject m_object;
+
       LuaObject(const LuaObject&); //0x908a40
       LuaObject(const LuaStackObject&); //0x908a70
       LuaObject(LuaState*); //0x908970
@@ -22,6 +23,7 @@ namespace LuaPlus
       LuaObject& operator=(const LuaObject&); //0x908ab0
       LuaObject& operator=(const LuaStackObject&); //0x908b00
       LuaObject operator[](int) const; //0x9091e0
+      LuaObject operator[](const char*) const; //0x908f60
       bool GetBoolean() const; //0x907c90
       bool IsBoolean() const; //0x9078d0
       bool IsConvertibleToString() const; //0x9077c0
@@ -77,6 +79,7 @@ namespace LuaPlus
       void SetBoolean(const char*, bool) const; //0x9080c0
       void SetInteger(const char*, int) const; //0x9081f0
       void SetInteger(int, int) const; //0x908240
+      void SetMetaTable(const LuaObject&); //0x907e00
       void SetN(int) const; //0x907ed0
       void SetNil(const char*) const; //0x907fa0
       void SetNil(int) const; //0x907ff0
@@ -105,10 +108,12 @@ namespace LuaPlus
         LuaObject* m_next;  // only valid when in free list
         LuaObject* m_prev;  // only valid when in used list
       } m_headObject,  m_tailObject;
+
       LuaState(LuaState*); //0x90a520
       LuaState(enum StandardLibraries); //0x90ac10
       LuaState(enum UnattachedTag); //0x90a5d0
       ~LuaState(); //0x90a600
+      LuaObject GetGlobal(const char*); //0x4579d0
       LuaObject GetGlobals(); //0x90a690
       LuaState* GetActiveState(); //0x90bee0
       const char* CheckString(int); //0x912d10
