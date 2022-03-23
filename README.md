@@ -19,24 +19,23 @@ This are just the patch files for this game. I decided to separate them from pat
 - Camera performance improvements
     - LogParticleCap
     - LogSegBuffers
-    - LowResolutionGCam
-    - LowResolutionGCam2
 - Fix replays desyncing when a player leaves the game
     - EndGame
     - Gpg_Net_Entry
-    - Kill_maploader_except
     - SessionEndGame
     - Update_Pipeline_Stream
     - decode
     - instance
     - recvfrom
     - sendto
-    - sendto
     - sim_dispatch
     - user_input
-    - xact_3dapply
     - SetPaused
     - SimCallback
+- Kill exception during map loading
+    - Kill_maploader_except
+- Make xact3d the error message print once
+    - xact_3dapply
 - Prevent blueprint editor being used without cheat mode
     - FixOpenBPEditor
 - Can't become an observer while your human allies are still alive
@@ -52,6 +51,9 @@ This are just the patch files for this game. I decided to separate them from pat
     - WayPointArrive
 
 ## Additions
+- Console command: "cam_DefaultMiniLOD 0" now completely disable mesh renderer for minimap
+    - hooks/MinimapMesh.cpp
+    - sections/MinimapMesh.cpp
 - Allow players to double-click to select Walls
     - Walls
 - Similar to GetSystemTimeSecondsOnlyForProfileUse
