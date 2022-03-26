@@ -12,7 +12,7 @@ jobs:
       run:
         shell: bash
     env:
-      PATCHER_VERSION: v0
+      PATCHER_VERSION: v1.0
       MINGW_VERSION: 8.1.0
     steps:
       - uses: actions/checkout@v2
