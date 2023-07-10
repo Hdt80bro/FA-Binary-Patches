@@ -10,9 +10,17 @@ This are just the patch files for this game. I decided to separate them from pat
 
 # Change List
 ## Fixes
-- Updated used DLLs(MsftEdit, D3DX9_43, X3DAudio1_7, XACTEngine2_10)
-    - hooks/HUpdDlls.cpp
-    - section/UpdDlls.cpp
+- Upgrade Progress Fix
+    - hooks/HUpgradeProgressFix.cpp
+    - section/UpgradeProgressFix.cpp
+- Allows to use 4GB on x64
+    - hooks/HFix4GB.cpp
+- Reduce call sim beat of UI
+    - hooks/HUIReduceCallSimBeat.cpp
+- Removing CTRL formations
+    - hooks/HRemovingCTRLFormations.cpp
+- Ignore empty reclaim orders
+    - hooks/HIgnoreEmptyReclaim.cpp
 - Zeroing GuardScanRadius if the unit's order is not Patrol/AttackMove. Increases performance.
     - hooks/HGuardFix.cpp
     - section/GuardFix.cpp
@@ -30,7 +38,6 @@ This are just the patch files for this game. I decided to separate them from pat
     - hooks/CameraPerf.cpp
 - Fix replays desyncing when a player leaves the game
     - hooks/DesyncFix.cpp
-    - section/ext_sector.cpp
     - section/gpg_net.cpp
     - section/moho_decode.cpp
     - section/moho_input.cpp
@@ -39,7 +46,7 @@ This are just the patch files for this game. I decided to separate them from pat
     - hooks/Kill_maploader_except.cpp
 - Make xact3d the error message print once
     - hooks/xact_3dapply.cpp
-    - section/ext_sector.cpp
+    - section/xact_3d_fix.cpp
 - Prevent blueprint editor being used without cheat mode
     - hooks/FixOpenBPEditor.cpp
 - Can't become an observer while your human allies are still alive
@@ -50,29 +57,36 @@ This are just the patch files for this game. I decided to separate them from pat
     - hooks/aiinitattack.cpp
 - Fix a crash when units arrive at waypoints
     - hooks/WayPointArrive.cpp
+- Improvements to lua messages
+    - hooks/LuaMessages.cpp
 
 ## Additions
+- Adds new category 'OBSTRUCTSBUILDING' for props to block buildings from being build on top of those
+    - hooks/Reclaimable.cpp
+    - section/Reclaimable.cpp
 - Allows changing army of ACUs
     - hooks/HTransferACUs.cpp
 - Allows customize colors for team color mode
     - hooks/TeamColorMode.cpp
     - section/TeamColorMode.cpp
+- Adds the order ID to the UserUnit:GetCommandQueue output
+    - hooks/HOrderIDOutput.cpp
+    - section/OrderIDOutput.cpp
 - GetSessionClients also output maximum sim speed(maxSP)
     - hooks/HOutputMaxSP.cpp
     - section/OutputMaxSP.cpp
-- Console command: "cam_DefaultMiniLOD 0" now completely disable mesh renderer for minimap
+- Console command: "cam_DefaultMiniLOD 0" now disable mesh renderer for minimap
     - hooks/MinimapMesh.cpp
     - section/MinimapMesh.cpp
 - Allow players to double-click to select Walls
-    - hooks/Walls.cpp
-- Similar to GetSystemTimeSecondsOnlyForProfileUse
-  Allows to deal with the loss of accuracy. It is present in the Sim and UI
+    - hooks/WallSelection.cpp
+- Adds GetTimeForProfile to Sim and UI. Allows to deal with the loss of accuracy
     - section/GetTimeForProfile.cpp
-    - section/ext_sector.cpp
+    - section/LuaFuncRegs.cpp
 - Adds optimized table.getsize2(~25 times faster) and table.empty2
-  Added getn2 as alias getn. Entry point to math functions queue
+  Adds getn2 as alias getn. Entry point to math functions queue
     - hooks/GetTableSize.cpp
-    - section/ext_sector.cpp
+    - section/LuaFuncRegs.cpp
 - Maximum sim rate up to 50
     - hooks/DelClampMaxSimRate.cpp
 - Adds an amphibious mode toggle to the Salem
@@ -81,18 +95,29 @@ This are just the patch files for this game. I decided to separate them from pat
 - Make `LOWSELECTPRIO` apply to units under construction
     - hooks/selectionPriority.cpp
     - section/selectionPriority.cpp
-- Allow the getting of Mass or Energy spots around a location & Entry point to ui functions queue
+- Adds GetDepositsAroundPoint to Sim and UI & Entry point to ui functions queue
+  Allow the getting of Mass or Energy spots around a location
     - hooks/UserGetDepositsAroundPoint.cpp
     - section/SimGetDepositsAroundPoint.cpp
-    - section/ext_sector.cpp
-- Allow devs to write console commands to the log
-    - hooks/ConsoleLog.cpp
-    - section/ConsoleLog.cpp
+    - section/LuaFuncRegs.cpp
+- Adds SetInvertMidMouseButton to UI
+    - section/InvertMidMouseButton.cpp
+    - section/LuaFuncRegs.cpp
 - Unlock an "Ultra" graphics preset
     - hooks/UnlockUltraPreset.cpp
-- Allow armies to be shared by multiple players & Entry point to sim functions queue
+- Adds SetCommandSource to Sim. Allow armies to be shared by multiple players
+    - section/SimSetCommandSource.cpp
+    - section/LuaFuncRegs.cpp
+- Adds GetMouseWorldPos to Sim
+    - section/LuaFuncRegs.cpp
+- Adds SessionIsReplay to Sim
+    - section/SimIsReplay.cpp
+    - section/LuaFuncRegs.cpp
+- Adds SetFocusArmy to Sim. Sets focus without restrictions
+  Entry point to sim functions queue
     - hooks/SimSetFocusArmy.cpp
     - section/SimSetFocusArmy.cpp
+    - section/LuaFuncRegs.cpp
 - Allow upgrades to be queued on units under construction
     - hooks/BuildUnit.cpp
     - section/BuildUnit.cpp

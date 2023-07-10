@@ -1,12 +1,13 @@
-#include "include/desync_fix_global.h"
+#pragma GCC optimize("O3")
 
-//FUNCTIONS with NAMES ARE WINAPI FOR THIS FILE. FOR EXAMPLE recvfrom
+#include "include/desync_fix_global.h"
 
 uint32_t tag_sent = 0;
 uint32_t p_index = 0;
 uint32_t sender_sock = 1;
 uint32_t sync_buffer[17];
 uint32_t discard = 0;
+bool game_ended = false;
 
 __attribute__((noinline)) void p_SetEvent()
 {
@@ -53,8 +54,7 @@ __attribute__((noinline)) void p_sptr()
 void _recvfrom()
 {
 	register int eax asm("eax");
-	asm
-	(
+	asm(
 		"recvfrom = 0x00C0F8D8;" //WINAPI
 		"L0xABEL_0x0048A94C = 4761932;"
 		"SetEvent = 0x00C0F578;"
@@ -141,8 +141,7 @@ void _recvfrom()
 		"mov esi,eax;"
 		"mov eax, dword ptr [0x11FD247];" //RETREIVE NETBUFFER PTR
 	);
-	asm volatile
-	(
+	asm(
 		"cmp dword ptr [0x011FD243], 0x1;" // check if we are the sender
 		"jne not_sender;"
 		"cmp byte ptr [eax+0x3], 0xFE;"
@@ -154,50 +153,41 @@ void _recvfrom()
 		"mov eax,dword ptr [esp+0xA8];" //get sender's socket
 	);
 
-	asm volatile
-	(
+	asm(
 		"call %[func];"
 		:
 		: [func] "i" (&CheckClients)
 		: "memory"
 	);
-
 	if(discard)
 	{
 		asm("jmp _skip;");
 	}
-
-	asm volatile
-	(
+	asm(
 		"call %[func];"
 		"mov eax,dword ptr [esp+0xA8];" //get sender's socket
 		:
 		: [func] "i" (&p_rptr)
 		: "memory"
 	);
-
 	p_index++;
 	sync_buffer[p_index] = eax;
 
 	if((current_num_clients-1) - p_index == 0)
 	{
-		asm
-		(
+		asm(
 		"push dword ptr [0x11FD253];"
 		"call dword ptr [SetEvent];"
 		);
 		p_index = 0;
-		asm volatile
-		(
+		asm(
 			"call %[func];"
 			:
 			: [func] "i" (&p_SetEvent)
 			: "memory"
 		);
 	}
-
-	asm
-	(
+	asm(
 		"jmp not_received;"
 		"not_sender:;"
 		"cmp byte ptr [eax+0x3], 0xA4;" //CHECK IF EXIT VARIABLE IS SET
@@ -213,16 +203,13 @@ void _recvfrom()
 	{
 		sender_sock = eax;
 	}
-
-	asm
-	(
+	asm(
 		"_skip:;"
 		"not_received:;"
 
 	);
 
-	asm
-	(
+	asm(
 
 		"test esi,esi;"
 		"mov dword ptr [esp+0x10],esi;"
@@ -230,14 +217,12 @@ void _recvfrom()
 		"jmp 0x0048A374;" //THERE ARE A LOT MORE CODE FURTHER BUT I AM LAZY TO WRITE IT BECAUSE THERE IS SWITCH CASE
 		//WHICH REQUIRES MANUAL CODING.
 	);
-
 }
 
 void _sendto()
 {
 	register int eax asm("eax");
-	asm
-	(
+	asm(
 		"htons = 0x00C0F8D0;"
 		"htonl = 0x00C0F8CC;"
 		"sendto = 0x00C0F8E0;"
@@ -294,15 +279,13 @@ void _sendto()
 		"mov byte ptr [eax + 0x2], 0x4E;" //WRITE VAR INTO THE PACKET HEADER
 		"mov eax, dword ptr [edx];"
 	);
-	asm volatile
-	(
+	asm(
 		"call %[func];"
 		:
 		: [func] "i" (&p_sptr)
 		: "memory"
 	);
-	asm
-	(
+	asm(
 
 		"jmp skip;"
 
@@ -316,16 +299,14 @@ void _sendto()
 	{
 		if(sender_sock == eax)
 		{
-			asm volatile
-			(
+			asm(
 				//"mov dword ptr [0x011FD23F+0x30],eax;"
 				"call %[func];"
 				:
 				: [func] "i" (&p_sptr)
 				: "memory"
 			);
-			asm
-			(
+			asm(
 			"mov eax, edi;"
 			"cmp byte ptr [eax + 0x3], 0;"     //overwrite only known memory, ie 0
 			"jne skip;"
@@ -337,11 +318,9 @@ void _sendto()
 			//sender_sock = 0;
 		}
 	}
-	asm
-	(
+	asm(
 		"skip:;"
 		"call dword ptr [sendto];"
-
 
 		"mov esi,dword ptr [ebp+0x418];"
 		"call 0x489F30;"
@@ -592,8 +571,7 @@ void _sendto()
 
 void Gpg_Net_Entry()
 {
-	asm
-	(
+	asm(
 		"GetCurrentThread = 0x00C0F588;"
 		"SetThreadPriority = 0x00C0F52C;"
 		"WSAWaitForMultipleEvents = 0x00C0F930;"
@@ -647,7 +625,6 @@ void Gpg_Net_Entry()
 		"push ecx;"
 		"call dword ptr [CreateEvent];"
 		"mov dword ptr [0x11FD253], eax;"
-
 
 		"lea ecx,dword ptr [edi+0x8];"
 		"mov dword ptr [esp+0x1C],ecx;"
@@ -848,3 +825,42 @@ void Gpg_Net_Entry()
 		"ret 0x8;"
 	);
 }
+
+void EndGame()
+{
+	game_ended = true;
+	asm("mov dword ptr [0x011FD23F], 0xB;"); //remove block when last player remains.
+	asm(
+		"push esi;"
+		"mov esi,eax;"
+		"mov eax,dword ptr [esi];"
+		"push edi;"
+		"mov edi,dword ptr [0x10BA600];"
+		"push eax;"
+		"call 0x90C590;"
+		"add esp,0x4;"
+		"test eax,eax;"
+		"je L0xABEL_0x0074B8DB;"
+		"push eax;"
+		"push 0x0;"
+		"push edi;"
+		"push 0xE0A220;"
+		"push esi;"
+		"call 0x90C1D0;"
+		"add esp,0x14;"
+		"L0xABEL_0x0074B8DB:;"
+		"mov esi,dword ptr [esi];"
+		"push esi;"
+		"call 0x924050;"
+		"mov edx,dword ptr [eax];"
+		"mov ecx,eax;"
+		"mov eax,dword ptr [edx+0x5C];"
+		"add esp,0x4;"
+		"call eax;"
+		"pop edi;"
+		"xor eax,eax;"
+		"pop esi;"
+		"ret;"
+	);
+}
+#pragma GCC reset_options

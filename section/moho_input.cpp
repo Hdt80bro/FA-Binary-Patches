@@ -1,3 +1,5 @@
+#pragma GCC optimize("O3")
+
 #include "include/desync_fix_global.h"
 
 uint32_t input_tick = 0;
@@ -7,9 +9,7 @@ uint32_t init_tick = 0;
 void MOHO_USER_INPUT()
 {
 	register int eax asm("eax");
-
-	asm
-	(
+	asm(
 		"SetCursorPos = 0x00C0F7C0;"
 		"Sleep = 0x00C0F574;"
 		"WaitForSingleObject = 0x00C0F524;"
@@ -24,15 +24,13 @@ void MOHO_USER_INPUT()
 			asm("mov dword ptr [0x011FD23F], 0xB;");
 		}
 	}
-	asm
-	(
+	asm(
 		"mov al, 0x1;"
 		"ret 0x4;"
 		"run_input_check:;"
 	);
 	init_tick = input_tick;
-	asm
-	(
+	asm(
 
 		"push ebp;"
 		"mov ebp,esp;"
@@ -674,8 +672,7 @@ void MOHO_USER_INPUT()
 				asm("jmp L0xABEL_0x00870EDC;");
 				break;
 		}
-	asm
-	(
+	asm(
 
 		//"jmp L0xABEL_0x00000000;"
 		"mov edi,dword ptr [esp+0x20];"
@@ -989,5 +986,5 @@ void MOHO_USER_INPUT()
 		"pop ebp;"
 		"ret 0x4;"
 	);
-
 }
+#pragma GCC reset_options

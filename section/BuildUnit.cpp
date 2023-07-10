@@ -3,15 +3,12 @@ char** _pCQUEMOV = (char**)&_sCQUEMOV;
 
 void BuildUnit()
 {
-    asm
-    (
+    asm(
         "PUSH 0x00E19824;"
-        "JMP SHORT L1;"
-        "L2:;"
-	);
-
-	asm
-    (
+        "JMP BU_L1;"
+        "BU_L2:;"
+    );
+    asm(
         "PUSH %[_pCQUEMOV];"
         "MOV EDX,SS:[ESP-0x80];"
         "MOV ECX,SS:[ESP];"
@@ -20,7 +17,7 @@ void BuildUnit()
         "CMP EDX,ECX;"
         "JE 0x006EFACE;"
         "MOV SS:[ESP+0x20],EAX;"
-        "L1:;"
+        "BU_L1:;"
         "LEA ECX,SS:[ESP+0x44];"
         "CALL 0x00405550;"
         "MOV BYTE PTR SS:[ESP+0x36C],1;"
@@ -31,7 +28,7 @@ void BuildUnit()
         "CALL 0x0067B050;"
         "TEST AL,AL;"
         "JNE 0x006EFAF8;"
-        "JMP SHORT L2;"
+        "JMP BU_L2;"
         :
         : [_pCQUEMOV] "d" (_pCQUEMOV)
         :

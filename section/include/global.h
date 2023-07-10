@@ -22,21 +22,28 @@ Get debugging info about a Lua call:
 [[CallInfo+0C]-[Proto+0C]+[Proto+14]] = currentline
 */
 #define GDecl(addr, type) \
-  ((type)*(int*)(addr))
+  (*(type*)addr)
+
+#define WDecl(addr, type) \
+  ((type)*(uintptr_t*)addr)
 
 #define FDecl(addr, name, type) \
-  inline const auto name = (type)addr;
+  const auto name = (type)addr;
 
-#define g_STIDriver			GDecl(0x10C4F50, void*)
-#define g_SWldSessionInfo		GDecl(0x10C4F58, void*)
-#define g_CWldSession			GDecl(0x10A6470, void*)
-#define g_Sim				GDecl(0x10A63F0, void*)
-#define g_EntityCategoryTypeInfo	GDecl(0x10C6E70, void*)
-#define g_CAiBrainTypeInfo		GDecl(0x10C6FA0, void*)
-#define g_CUIManager			GDecl(0x10A6450, void*)
-#define g_EngineStats			GDecl(0x10A67B8, void*)
-#define g_WRenViewport			GDecl(0x10C7C28, void*)
-#define g_ConsoleLuaState		GDecl(0x1104410, LuaState)
+#define VALIDATE_SIZE(struc, size) \
+  static_assert(sizeof(struc) == size, "Invalid structure size of " #struc);
+
+#define g_CSimDriver			GDecl(0x10C4F50, CSimDriver*)
+#define g_SWldSessionInfo		GDecl(0x10C4F58, SWldSessionInfo*)
+#define g_CWldSession			GDecl(0x10A6470, CWldSession*)
+#define g_Sim				GDecl(0x10A63F0, Sim*)
+#define g_EntityCategoryTypeInfo	GDecl(0x10C6E70, EntityCategoryTypeInfo*)
+#define g_CAiBrainTypeInfo		GDecl(0x10C6FA0, CAiBrainTypeInfo*)
+#define g_CUIManager			GDecl(0x10A6450, CUIManager*)
+#define g_EngineStats			GDecl(0x10A67B8, EngineStats*)
+#define g_WRenViewport			GDecl(0x10C7C28, WRenViewport*)
+#define g_ConsoleLuaState		GDecl(0x10A6478, LuaState*)
+#define g_Device			GDecl(0x0F8E284, Device*)
 
 #define ui_ProgressBarColor		GDecl(0x0F57BB8, int)
 #define ui_SelectTolerance		GDecl(0x0F57A90, float)
@@ -47,6 +54,7 @@ Get debugging info about a Lua call:
 #define range_RenderHighlighted		GDecl(0x10A640B, bool)
 #define range_RenderBuild		GDecl(0x10A6414, bool)
 #define d3d_WindowsCursor		GDecl(0x10A636E, bool)
+#define debugSelect			GDecl(0x10A645E, bool)
 
 #define s_FACTORY			GDecl(0xE19824, const char*)
 #define s_EXPERIMENTAL			GDecl(0xE204B8, const char*)
@@ -61,11 +69,25 @@ FDecl(0x937D30, WarningF,	int (*)(const char *fmt, ...))
 FDecl(0x937C30, SpewF,		int (*)(const char *fmt, ...))
 FDecl(0x41C990, ConsoleLogF,	int (*)(const char *fmt, ...))
 FDecl(0xA9B4E6, FileWrite,	int (*)(int fileIndex, const char *str, int strlen)) //index 3 is log.
-FDecl(0xA825B9, shi_new,	void* (*)(uint32_t size))
-FDecl(0x958C40, shi_delete,	void (*)(void* ptr))
+FDecl(0xA825B9, shi_new,	void* (*)(size_t size))
+FDecl(0x957B00, realloc,	void* (*)(void *ptr, size_t new_size))
+FDecl(0x958B20, malloc,		void* (*)(size_t size))
+FDecl(0x958C40, free,		void (*)(void *ptr))
+FDecl(0x957EA0, msize,		size_t (*)(void *memblock))
+FDecl(0x957AB0, calloc,		void* (*)(size_t num, size_t size))
+FDecl(0xA89110, memset,		void* (*)(void *dest, int ch, size_t count))
+FDecl(0xA89190, memcpy,		void* (*)(void *dest, const void *src, size_t count))
+FDecl(0x452FC0, sqrtf,		float (*)(float arg))
+FDecl(0xA94450, strlen,		size_t (*)(const char *str))
 
-#define GetModuleHandle GDecl(0xC0F378, __stdcall void* (*)(const char* lpLibFileName))
-#define GetProcAddress  GDecl(0xC0F48C, __stdcall void* (*)(void* hModule, const char* lpProcName))
+FDecl(0x405550, InitString,	__thiscall void (*)(void *this_, const char *str))
+FDecl(0x4059E0, AssignString,	__thiscall void (*)(void *this_, const char *str, size_t size))
+
+#define GetModuleHandle WDecl(0xC0F378, __stdcall void* (*)(const char *lpLibFileName))
+#define GetProcAddress  WDecl(0xC0F48C, __stdcall void* (*)(void* hModule, const char *lpProcName))
+
+#define QueryPerformanceCounter   WDecl(0xC0F470, __stdcall bool (*)(int64_t*))
+#define QueryPerformanceFrequency WDecl(0xC0F46C, __stdcall bool (*)(int64_t*))
 
 /*
 LuaPlus: See FALuaFuncs.txt
@@ -84,6 +106,9 @@ LuaObjectFinalize
 
 //Lua internals. For debug only.
 
+009133A0 luaG_typeerror
+004154B0 LuaStackObjectTypeError
+009134B0 errorfb
 00457880 luaplus_assert
 009274D0 luaH_getstr
 0091A240 luaM_realloc
@@ -93,21 +118,20 @@ LuaObjectFinalize
 00915D90 luaC_collectgarbage
 009248E0 CreateHashStr
 009142A0 CallCFunctionFromLua
+009240A0 GetLuaState(lua_State*):eax
+0090A510 GetLuaState+1
 
 // Other
 
 00938E00 Format
 00938F10 Format+1
-00A89950 _CxxThrowException
+00A89950 CxxThrowException
 
-00958B20 AllocMemory(Size):eax
-00957A70 AllocMemory+1
-00A825B9 AllocMemory2(Size):eax
-00A82130 AllocMemory2+1
-00958C40 FreeMemory(Ptr)
-00957AF0 FreeMemory+1
-00957A60 FreeMemory+2
-00A82542 FreeMemory+3
+00957A70 malloc+1
+00A82130 shi_new+1
+00957AF0 free+1
+00957A60 free+2
+00A82542 free+3
 
 00459D10 OpenFile
 008E0750 LookupRType
@@ -179,8 +203,19 @@ LuaObjectFinalize
 008F4260 D3DXEffect::EndPass ?
 00941D70 D3DXEffect::SetMatrix ?
 00941F60 D3DXEffect::SetTechnique
+00943A90 EffectVariableD3D9::SetMem(int len, float *ptr)
+00943E10 EffectVariableD3D9::SetMatrix4x4(float *ptr)
+00943550 EffectVariableD3D9::SetFloat(float *ptr)
+00452AF0 Vec3NormInPlace(float* ecx)
+008F5950 LockVertexBuffer
+008F5B40 UnlockVertexBuffer
+0081F7B0 GetLeftMouseButtonAction
+0081EC00 GetRightMouseButtonAction
+008B43F0 GetEntitiesUnderCursor ?
 00858D80 DisplayEconomyOverlay
 00430590 D3DGetDevice
+008E6730 GetDeviceD3D9
+00430590 GetCD3DDeviceVTbl**
 008D82F0 CreateBitArray2D
 008D8210 BitArray2DReset
 008D8200 DestroyBitArray2D
@@ -199,6 +234,10 @@ LuaObjectFinalize
 0040A0A0 CreateStatItemRoot(EngineStats*):eax
 00408730 InitStatItem(StatItem*, char* name):eax
 008E5050 CalcHash
+005D62B0 CreateCAiAttackerImpl
+005D6AA0 InitCAiAttackerImpl
+005D5D90 AiAttacker::GetWeaponCount
+005BE6E0 InitReconBlip
 00542870 CreateLaunchInfoNew
 00542790 InitLaunchInfoNew
 005427F0 DestroyLaunchInfoNew
@@ -220,6 +259,7 @@ LuaObjectFinalize
 007AA9C0 CreateCamera
 007A7950 InitCamera
 007A7DC0 DestroyCamera
+0086E060 InitCameraDragger
 00749F40 SimBeat
 0073DAD0 SimSync
 00894530 UserSync
@@ -250,21 +290,27 @@ LuaObjectFinalize
 005289D0 RegisterBlueprint(RRuleGameRules*, char* Category)
 007FA230 CreateWRenViewport
 007F66A0 InitWRenViewport
+007F90D0 TerrainRender
+008015C0 SetTerrainVariables
+007D2EA0 SetCartographicVariables
+007E19D0 SetMeshVariables
 007EDFE0 GenerateRingCylinders
 007EF5A0 RenderRings
 005779C0 CreateMapData
 004783D0 CreateTerrainHeights
 00577890 InitSTIMap
 005790E0 CreateCHeightField
-0044FB90 GetTerrainHeight(float x, float z):int ecx
+0044FB90 GetTerrainHeight(MapData*, float x, float z):int ecx
+00758E10 GetTerrainType(STIMap* eax, int esi X, int edi Z):LuaObject ebx
 0074B120 FlattenTerrain(STIMap*, int Rect*, float Height)
 00476BB0 UpdateMinimap(MapData*, int x1, int y1, int x2, int y2)
 00890DA0 MapLoad
 0057CBB0 CanBuildStructureAt(CAiBrain*, x, y, z, Blueprint*, ?, ?, ?):al
 006856C0 SimFindEntityChainById(ecx* entities, ebx* id, eax* result)
 00898DC0 UserFindEntityChainById(ecx* entities, ebx* id, eax* result)
+008B05E0 ISSUE_Command
+008B0180 GiveOrder(list<UserUnit*>*, unused void*, out int?, struct?)
 
-const int _CastState_LuaState_LuaPlus__SAPAV12_PAUlua_State___Z = 0x90A510;
 const int LuaStackObject__GetBoolean = 0x415560;
 
 const int _AssignClientIndex_CLobby_Moho__AAEXHVStrArg_gpg__AAIAAH_Z = 0x7C4E80;
@@ -288,13 +334,12 @@ const int _Moho_SSTICommandIssueData_Destructor = 0x0057ABB0;
 #define _NeitherInCategoryInConstruct = 0x006EFACE;
 #define _EndCalculateNoRushTimerVariable = 0x006FF3D6;
 
-#define _CheckCategory = 0x00405550;
-#define _CheckCategory_sub_func = 0x004059E0;
 #define _GetCatCmpResult = 0x0067B050;
-#define _exit_STAYONWATSUR_check = 0x0062ADEE;
-#define _exit_STAYONWATSUR_NoMatch = 0x0062ADEC;
 #define _Moho_SSTICommandIssueData_SSTICommandIssueData = 0x00552550;
 
 // MSVCR80.dll
 #define _memmove_s = 0x00A824E7;
+
+// New unit categories.
+const char* sCQUEMOV = "CQUEMOV";
 */
