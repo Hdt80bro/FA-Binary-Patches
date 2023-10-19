@@ -72,7 +72,7 @@ asm(R"(
 # collisions so that they can be unscheduled when the projectile ends up never
 # hitting the water.
 .section h0; .set h0,0x69D258 #Moho::Projectile::CheckCollision+0x88
-	# a few optimizations while we're at it
+	# there are a few optimizations while we're at it
 	mov     [esp+0x230+mapData], eax # move this up now that we can jump earlier
 	# store a default value for the water level; the function needs it later for
 	# a different check we aren't jumping early from
@@ -82,9 +82,9 @@ asm(R"(
 	mulss   xmm1, dword ptr [two]
 	# about to be overlapped, but we could still break
 	movss   [esp+0x230+distMoved], xmm1
+	# move the no collision check earlier
 	cmp     byte ptr [edi+collideSurface], 0
 	mov     byte ptr [layerCallback], LAYERCALLBACK_None
-	# move the no collision check earlier
 	jz      short CONTINUE_FUNCTION
 	# skip water checks instead of using -10,000 if there's no water
 	cmp     byte ptr [eax+hasWater], 0
@@ -207,9 +207,7 @@ TERRAIN_CHECK:
 	movss   xmm7, [esp+0x230+segment+norm_dir+z]
 	mov     ecx, [esp+0x230+mapData]
 	movss   [esp+0x230+hitResult+distance], xmm1
-	# appears to not be used in `CHeightField__Intersection`, but is more likely
-	# to be needed than the next variables in the stack
-	movss   [esp+0x230+hitResult+4], xmm1
+	movss   [esp+0x230+hitResult+4], xmm1 # unknown
 	movaps  xmm1, xmm5
 	mulss   xmm1, xmm0
 	subss   xmm4, xmm1
@@ -223,11 +221,8 @@ TERRAIN_CHECK:
 	mulss   xmm3, xmm0
 	mulss   xmm0, dword ptr [two]
 	lea     edx, [esp+0x230+hitResult]
-	# the next two variables in the stack could be also an unused field in that
-	# function, or an early initialization for `speed`; either way, we don't
-	# need to do that and can remove the variables that used to be set here
-	mov     [esp+0x230+hitResult+8], eax
-	mov     [esp+0x230+hitResult+12], eax
+	mov     [esp+0x230+hitResult+8], eax # unknown
+	mov     [esp+0x230+hitResult+12], eax # unknown
 	mov     eax, [ecx]
 	movss   [esp+0x230+colhitRes+pos+y], xmm1
 	xorps   xmm1, xmm1
@@ -249,12 +244,12 @@ TERRAIN_CHECK:
 	call    Vector3f__IsntNaN
 	# if there's no terrain collision, proceed with the scheduled callbacks
 	test    al, al
+	# restore `distMoved`
 	movss   xmm3, dword ptr [waterHitDist]
 	movss   xmm1, [esp+0x230+segment+radius]
 	mulss   xmm1, dword ptr [two]
 	movss   [esp+0x230+distMoved], xmm1
 	jz      short CHECK_LAYER_CHANGE
-	# restore `distMoved` in this branch
 	xorps   xmm1, xmm1
 	movss   xmm0, dword ptr [edi+impactInterp]
 	comiss  xmm1, xmm0
