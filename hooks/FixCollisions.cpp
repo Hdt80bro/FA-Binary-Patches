@@ -321,8 +321,9 @@ SKIP_SHIELD_CHECK: #Moho::Projectile::CheckCollision+0x9DB
                      
 
 
-# change the 10% velocity offset for unit collision lines to 0% so the distance
-# is measured properly
+# change the 10% velocity offset for unit collision lines to 1% so the distance
+# is measured closer to proper - it can't be 0% or else entity collisions will
+# register as terrain collisions for some reason
 .section h5; .set h5,0x69DA6A #Moho::Projectile::CheckCollision+0x89A
 	movss   xmm7, dword ptr [onePercent]
 
