@@ -13,6 +13,7 @@ asm(R"(
 	one             = 0x0DFEC20
 	two             = 0x0DFEB0C
 	n10000          = 0x0E4F6E4
+	onePercent      = 0x0E4F950
 	NaN             = 0x10A7CB0
 	pInf            = 0x10B5484
 	nInf            = 0x10B5488
@@ -313,18 +314,16 @@ CONTINUE_FUNCTION: #Moho::Projectile::CheckCollision+0x457
 
 # The splice will nestle right in here.
 # Jumping to an extra section with a label (instead of an offset) will catch any
-# section overlaps - thought it does make it always a 4 byte jump.
+# section overlaps - though it does make it always a 4 byte jump.
 
 .section h4; .set h4,0x69DBAB -1;nop
 SKIP_SHIELD_CHECK: #Moho::Projectile::CheckCollision+0x9DB
                      
-)");
 
-asm(R"(
 
 # change the 10% velocity offset for unit collision lines to 0% so the distance
 # is measured properly
 .section h5; .set h5,0x69DA6A #Moho::Projectile::CheckCollision+0x89A
-	movss   xmm7, dword ptr [0xE4F7E0] # zero
+	movss   xmm7, dword ptr [onePercent]
 
 )");
