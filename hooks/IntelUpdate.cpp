@@ -2,6 +2,7 @@
 
 asm(R"(
 
+
 # make intelligence update every tick
 
 .section h0; .set h0,0x76F1E0 #Moho::CIntelPosHandle::UpdatePos
