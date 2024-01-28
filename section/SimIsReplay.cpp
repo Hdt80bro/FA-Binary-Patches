@@ -6,7 +6,7 @@ int SimSessionIsReplay(lua_State *L) {
 }
 
 //PatcherList_SimFuncRegs_SSIRRegDesc
-luaFuncDescReg SSIRRegDesc = {
+CScrLuaInitForm SSIRRegDesc = {
     0x00E45E90,
     0x00E4AFBC, // "SessionIsReplay"
     0x00E00D90,
