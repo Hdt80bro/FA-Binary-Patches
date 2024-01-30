@@ -18,10 +18,7 @@ These don't matter except for other assembly patches
     - hooks/LuaFuncRegs.cpp
     - section/LuaFuncRegs.cpp
 
-## Fixes
-These mainly make the game run faster
-
-### Optimizations
+## Optimizations
 - Optimize `VDist3` function
     - hooks/VDist3.cpp
     - section/VDist3.cpp
@@ -41,7 +38,9 @@ These mainly make the game run faster
 - Optimised some AI actions
     - hooks/aiinitattack.cpp
 
-### Bugs
+## Bugs
+- Fix CUIWorldMesh:GetInterpolatedAlignedBox return table to properly store `ymax` and `zMax`
+    - hooks/FixGetInterpolatedAlignedBox.cpp
 - Make `TestCommandCaps` test commands caps instead of toggle caps
     - hooks/FixTestCommandCaps.cpp
 - Reduce terrain collision distance-based offset to 1%;
@@ -81,7 +80,7 @@ These mainly make the game run faster
 - Fix a crash when units arrive at waypoints
     - hooks/WayPointArrive.cpp
 
-### Improvements
+## Improvements
 - Allows to use 4GB on x64
     - hooks/HFix4GB.cpp
 - Make xact3d the error message print once
@@ -90,12 +89,7 @@ These mainly make the game run faster
 - Improvements to lua messages
     - hooks/LuaMessages.cpp
 
-
-## Changes
-These change the way the game is played or interacted with by Lua
-
-### Gameplay
-
+## Gameplay
 - Change tick intel update interval from every 30 ticks to every 1 tick
     - hooks/IntelUpdate.cpp
 - Removing CTRL formations
@@ -113,17 +107,16 @@ These change the way the game is played or interacted with by Lua
 - Make `LOWSELECTPRIO` apply to units under construction
     - hooks/selectionPriority.cpp
 
-### Lua
-
+## Lua
 - Change `SUBCOMMANDER` category name to `SACU_BEHAVIOR` (FAF makes this transparent)
     - hooks/CategoryRenames.cpp
 - Stop the engine calling lua every time a plane turns
     - hooks/OnMotionTurnEvent.cpp
 
-
 ## Additions
 These new features have been added in a backwards compatibile manner
 
+- Adds `GetHighlightCommand() - return table of command or nil` to UI (section/GetHighlightCommand.cpp)
 - Adds new methods to the the `Projectile` class (section/ProjectileNewMethods.cpp):
     - `Projectile:SetNewTargetGroundXYZ(x, y, z)`
     - `x, y, z = Projectile:GetCurrentTargetPositionXYZ()`
