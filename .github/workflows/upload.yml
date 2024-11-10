@@ -37,6 +37,7 @@ jobs:
     name: Patch the binary
     uses: ./.github/workflows/build.yml
   release:
+    needs: build
     environment: deploy
     runs-on: linux-latest
     defaults:
