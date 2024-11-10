@@ -39,7 +39,7 @@ jobs:
   release:
     needs: build
     environment: deploy
-    runs-on: linux-latest
+    runs-on: windows-latest
     defaults:
       run:
         shell: bash
