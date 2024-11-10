@@ -18,9 +18,15 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-name: Build
+# Responsible for creating a build. The build process succeeding is a test 
+# on itself. If it succeeds, then we know that the executable can be run
+# and everything that remains are possible run-time errors :).
+
+name: Build and test
 
 on:
+  push: 
+    branches: "master"
   pull_request:
     branches: "master"
   workflow_dispatch:
