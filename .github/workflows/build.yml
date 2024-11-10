@@ -18,11 +18,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+name: Build and test
+
 # Responsible for creating a build. The build process succeeding is a test 
 # on itself. If it succeeds, then we know that the executable can be run
 # and everything that remains are possible run-time errors :).
-
-name: Build and test
 
 on:
   push: 
@@ -49,18 +49,24 @@ jobs:
 
       - uses: actions/checkout@v4
 
-      - name: Download Patcher
+      - name: Download patcher
         run: curl -L "https://github.com/FAForever/FA_Patcher/releases/latest/download/FaP.exe" -o BinaryPatcher.exe
 
+      # This is the baseline binary that all executable patches rely on. 
       - name: Download Baseline
         run: curl -L "https://content.faforever.com/build/ForgedAlliance_base.exe" -o ForgedAlliance_base.exe
 
-      - name: Patch Binary
+      # Allows us to determine what executable is running as we play the game.
+      - name: Add commit hash to patch files
         run: |
-          # 
           echo '#define gitsha "'${GITHUB_SHA::7}'"' > workflow.cpp
+
+      # Patches the binary by applying all the assembly patches.
+      - name: Patch the binary
+        run: |
           ./BinaryPatcher.exe
 
+      # Allows us to retrieve, test and/or release the patched binary.
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
