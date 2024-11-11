@@ -18,14 +18,15 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-name: Build and test
+name: Test - C
 
-# Responsible for creating a build. The build process succeeding is a test 
-# on itself. If it succeeds, then we know that the executable can be run
-# and everything that remains are possible run-time errors :).
+# Note: due to piracy concerns we should at no point upload the executable as
+# an artifact. We do not want the lua-compatible executable available to the
+# public without verification that they own the game. This verification is 
+# done via the client.
 
 on:
-  push: 
+  push:
     branches: "master"
   pull_request:
     branches: "master"
@@ -33,7 +34,7 @@ on:
   workflow_call:
 
 jobs:
-  build:
+  test:
     runs-on: windows-latest
     defaults:
       run:
@@ -52,7 +53,7 @@ jobs:
       - name: Download patcher
         run: curl -L "https://github.com/FAForever/FA_Patcher/releases/latest/download/FaP.exe" -o BinaryPatcher.exe
 
-      # This is the baseline binary that all executable patches rely on. 
+      # This is the baseline binary that all executable patches rely on.
       - name: Download Baseline
         run: curl -L "https://content.faforever.com/build/ForgedAlliance_base.exe" -o ForgedAlliance_base.exe
 
@@ -65,11 +66,3 @@ jobs:
       - name: Patch the binary
         run: |
           ./BinaryPatcher.exe
-
-      # Allows us to retrieve, test and/or release the patched binary.
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: "ForgedAlliance_${{ github.sha }}"
-          path: |
-            ForgedAlliance_exxt.exe

@@ -18,7 +18,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-name: Upload and release
+name: Release - C
+
+# Note: due to piracy concerns we should at no point upload the executable as
+# an artifact. We do not want the lua-compatible executable available to the
+# public without verification that they own the game. This verification is 
+# done via the client.
 
 on:
   workflow_dispatch:
@@ -33,23 +38,39 @@ on:
           - fafbeta
 
 jobs:
-  build:
-    name: Patch the binary
-    uses: ./.github/workflows/build.yml
   release:
-    needs: build
     environment: deploy
     runs-on: windows-latest
     defaults:
       run:
         shell: bash
     steps:
-      # Retrieve the patched binary
-      - name: Download artifact of patched binary
-        uses: actions/download-artifact@v4
+      - uses: msys2/setup-msys2@v2
         with:
-          name: "ForgedAlliance_${{ github.sha }}"
-          path: .
+          msystem: MINGW32
+
+      - name: Install MinGW
+        run: |
+          pacman --noconfirm -S mingw-w64-i686-gcc
+
+      - uses: actions/checkout@v4
+
+      - name: Download patcher
+        run: curl -L "https://github.com/FAForever/FA_Patcher/releases/latest/download/FaP.exe" -o BinaryPatcher.exe
+
+      # This is the baseline binary that all executable patches rely on.
+      - name: Download Baseline
+        run: curl -L "https://content.faforever.com/build/ForgedAlliance_base.exe" -o ForgedAlliance_base.exe
+
+      # Allows us to determine what executable is running as we play the game.
+      - name: Add commit hash to patch files
+        run: |
+          echo '#define gitsha "'${GITHUB_SHA::7}'"' > workflow.cpp
+
+      # Patches the binary by applying all the assembly patches. Produces a new executable called "ForgedAlliance_exxt.exe".
+      - name: Patch the binary
+        run: |
+          ./BinaryPatcher.exe
 
       # Upload the patched binary to the FAForever server
       - name: Upload to server
